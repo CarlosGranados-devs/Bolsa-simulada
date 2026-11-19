@@ -1,0 +1,21 @@
+{
+  "name": "bolsa-simulada-sv",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Simulador de bolsa salvadoreña con empresas ficticias, SQLite en WebAssembly y persistencia local.",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "lightweight-charts": "^5.3.0",
+    "sql.js": "^1.16.0"
+  },
+  "devDependencies": {
+    "@types/sql.js": "^1.4.11",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.8"
+  }
+}

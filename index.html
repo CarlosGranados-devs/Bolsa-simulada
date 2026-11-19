@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Bolsa Simulada SV: terminal bursátil con empresas ficticias salvadoreñas, operaciones en vivo y datos persistentes en tu navegador."
+    />
+    <meta name="theme-color" content="#070708" />
+    <title>Bolsa Simulada SV | Terminal bursátil</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+  </head>
+  <body>
+    <a class="skip-link" href="#empresas">Saltar al mercado</a>
+
+    <div id="intro" class="intro" role="dialog" aria-modal="true" aria-label="Iniciando Bolsa Simulada SV" hidden>
+      <div class="intro-terminal">
+        <div class="intro-bar">
+          <span class="intro-dot" aria-hidden="true"></span>
+          <span class="intro-dot" aria-hidden="true"></span>
+          <span class="intro-dot" aria-hidden="true"></span>
+          <span class="intro-bar-title">TERMINAL 01 / SVX</span>
+        </div>
+        <div class="intro-lines">
+          <p data-intro-line="0">&gt; Conectando con Bolsa Simulada SV...</p>
+          <p data-intro-line="1">&gt; Cargando mercado...</p>
+          <p data-intro-line="2">&gt; Verificando libros de órdenes...</p>
+          <p class="intro-final" data-intro-line="3">Mercado abierto<span class="intro-cursor" aria-hidden="true"></span></p>
+        </div>
+        <div class="intro-progress" aria-hidden="true"><span></span></div>
+        <p class="intro-skip">Clic o cualquier tecla para saltar</p>
+      </div>
+    </div>
+
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true"><span></span></span>
+        <div class="brand-copy">
+          <h1>BOLSA SIMULADA <span>SV</span></h1>
+          <p>MERCADO FICTICIO / SAN SALVADOR</p>
+        </div>
+      </div>
+
+      <div class="market-state">
+        <span class="status-dot" aria-hidden="true"></span>
+        <span>MERCADO ABIERTO</span>
+        <span id="market-clock" class="market-clock">--:--:--</span>
+      </div>
+
+      <dl class="stats">
+        <div class="stat">
+          <dt>Efectivo</dt>
+          <dd id="stat-cash">$0.00</dd>
+        </div>
+        <div class="stat">
+          <dt>Portafolio</dt>
+          <dd id="stat-portfolio">$0.00</dd>
+        </div>
+        <div class="stat stat-pl">
+          <dt>Ganancia / pérdida</dt>
+          <dd id="stat-pl">$0.00</dd>
+        </div>
+      </dl>
+
+      <button id="reset-button" class="btn btn-ghost reset-button" type="button">
+        Reiniciar simulación
+      </button>
+    </header>
+
+    <section class="ticker" aria-label="Cinta de precios del mercado">
+      <div class="ticker-label">SVX</div>
+      <div class="ticker-viewport">
+        <div id="ticker-track" class="ticker-track"></div>
+      </div>
+    </section>
+
+    <section class="help-strip" aria-label="Ayuda rápida">
+      <div class="help-item">
+        <span class="help-key">01 / COMPRAR</span>
+        <p>Selecciona una empresa, elige Comprar en el ticket, indica la cantidad y ejecuta.</p>
+      </div>
+      <div class="help-item">
+        <span class="help-key">02 / LANZAR EMPRESA</span>
+        <p>Usa el formulario IPO con un ticker único de 2 a 5 letras y un precio mayor que cero.</p>
+      </div>
+      <div class="help-item">
+        <span class="help-key">03 / REINICIAR</span>
+        <p>El botón Reiniciar simulación devuelve el mercado y tu efectivo a los datos iniciales.</p>
+      </div>
+    </section>
+
+    <main class="dashboard">
+      <section class="panel chart-panel" aria-labelledby="chart-title">
+        <div class="panel-head">
+          <div>
+            <span class="eyebrow">GRÁFICO / HISTORIAL</span>
+            <h2 id="chart-title">Selecciona una empresa</h2>
+          </div>
+          <div class="chart-quote">
+            <strong id="chart-price">--</strong>
+            <span id="chart-change" class="muted">--</span>
+          </div>
+        </div>
+        <div class="chart-wrap">
+          <div id="chart" class="chart"></div>
+          <div id="chart-empty" class="chart-empty">
+            <span>SVX</span>
+            <p>Selecciona una empresa de la tabla para ver su historial de precios.</p>
+          </div>
+        </div>
+        <div class="news-block">
+          <div class="section-head">
+            <h3>Noticias del mercado</h3>
+            <span class="live-label"><span aria-hidden="true"></span> EN VIVO</span>
+          </div>
+          <ul id="news-feed" class="news-feed" aria-live="polite"></ul>
+        </div>
+      </section>
+
+      <section id="empresas" class="panel companies-panel" aria-labelledby="companies-title">
+        <div class="panel-head">
+          <div>
+            <span class="eyebrow">MERCADO LOCAL</span>
+            <h2 id="companies-title">Empresas</h2>
+          </div>
+          <span id="companies-count" class="count">0</span>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table companies-table">
+            <thead>
+              <tr>
+                <th scope="col">Ticker</th>
+                <th scope="col">Empresa</th>
+                <th scope="col" class="num">Precio</th>
+                <th scope="col" class="num">Var.</th>
+                <th scope="col" class="actions-col">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="companies-body"></tbody>
+          </table>
+        </div>
+        <p class="table-hint">Clic en una fila para graficarla y operar. Editar y Eliminar están en cada fila.</p>
+      </section>
+
+      <div class="right-stack">
+        <section class="panel order-panel" aria-labelledby="order-title">
+          <div class="panel-head">
+            <div>
+              <span class="eyebrow">TICKET DE ORDEN</span>
+              <h2 id="order-title">Operar</h2>
+            </div>
+            <span id="order-company" class="company-chip muted">Sin selección</span>
+          </div>
+
+          <div class="segmented" role="group" aria-label="Tipo de operación">
+            <button id="side-buy" class="segmented-btn is-active" type="button" aria-pressed="true">Comprar</button>
+            <button id="side-sell" class="segmented-btn" type="button" aria-pressed="false">Vender</button>
+          </div>
+
+          <form id="order-form" novalidate>
+            <div class="order-grid">
+              <div class="field">
+                <label for="order-qty">Cantidad</label>
+                <input id="order-qty" type="number" min="1" step="1" value="1" inputmode="numeric" autocomplete="off" />
+              </div>
+              <div class="field">
+                <span class="field-label">Precio actual</span>
+                <output id="order-price" class="output-value">--</output>
+              </div>
+            </div>
+            <p id="order-available" class="microcopy">Selecciona una empresa para operar.</p>
+            <div class="order-summary">
+              <span>Total estimado</span>
+              <strong id="order-total">$0.00</strong>
+            </div>
+            <p id="order-message" class="form-message" role="status"></p>
+            <button id="order-submit" class="btn btn-red btn-block" type="submit" disabled>Ejecutar compra</button>
+          </form>
+        </section>
+
+        <section class="panel form-panel" aria-labelledby="company-form-title">
+          <div class="panel-head">
+            <div>
+              <span id="company-form-eyebrow" class="eyebrow">NUEVA EMISIÓN</span>
+              <h2 id="company-form-title">Lanzar empresa (IPO)</h2>
+            </div>
+            <button id="cancel-edit" class="btn btn-mini" type="button" hidden>Cancelar</button>
+          </div>
+
+          <form id="company-form" novalidate>
+            <div class="form-grid">
+              <div class="field">
+                <label for="company-ticker">Ticker</label>
+                <input
+                  id="company-ticker"
+                  name="ticker"
+                  type="text"
+                  maxlength="5"
+                  minlength="2"
+                  placeholder="PPSA"
+                  autocomplete="off"
+                  spellcheck="false"
+                  required
+                />
+              </div>
+              <div class="field">
+                <label for="company-name">Nombre</label>
+                <input
+                  id="company-name"
+                  name="name"
+                  type="text"
+                  maxlength="48"
+                  placeholder="Pupusas S.A."
+                  autocomplete="off"
+                  required
+                />
+              </div>
+              <div class="field">
+                <label for="company-sector">Sector</label>
+                <select id="company-sector" name="sector" required>
+                  <option value="Alimentos">Alimentos</option>
+                  <option value="Bebidas">Bebidas</option>
+                  <option value="Transporte">Transporte</option>
+                  <option value="Energía">Energía</option>
+                  <option value="Turismo">Turismo</option>
+                  <option value="Aviación">Aviación</option>
+                  <option value="Tecnología">Tecnología</option>
+                  <option value="Servicios">Servicios</option>
+                  <option value="Finanzas">Finanzas</option>
+                  <option value="Comercio">Comercio</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="company-price">Precio inicial (USD)</label>
+                <input
+                  id="company-price"
+                  name="price"
+                  type="number"
+                  min="0.01"
+                  step="0.01"
+                  placeholder="25.00"
+                  inputmode="decimal"
+                  required
+                />
+              </div>
+              <div class="field">
+                <label for="company-volatility">Volatilidad (%)</label>
+                <input
+                  id="company-volatility"
+                  name="volatility"
+                  type="number"
+                  min="0.1"
+                  max="8"
+                  step="0.1"
+                  value="1.5"
+                  inputmode="decimal"
+                  required
+                />
+              </div>
+            </div>
+            <p id="company-form-message" class="form-message" role="status"></p>
+            <button id="company-submit" class="btn btn-solid btn-block" type="submit">Lanzar empresa</button>
+          </form>
+        </section>
+      </div>
+
+      <section class="panel portfolio-panel" aria-labelledby="portfolio-title">
+        <div class="panel-head">
+          <div>
+            <span class="eyebrow">POSICIONES</span>
+            <h2 id="portfolio-title">Portafolio</h2>
+          </div>
+          <span id="portfolio-total" class="count">$0.00</span>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table portfolio-table">
+            <thead>
+              <tr>
+                <th scope="col">Ticker</th>
+                <th scope="col" class="num">Cantidad</th>
+                <th scope="col" class="num">Costo prom.</th>
+                <th scope="col" class="num">Valor actual</th>
+                <th scope="col" class="num">Ganancia / pérdida</th>
+              </tr>
+            </thead>
+            <tbody id="portfolio-body"></tbody>
+          </table>
+        </div>
+        <p id="portfolio-empty" class="empty-state">Aún no tienes posiciones. Compra acciones para empezar.</p>
+      </section>
+
+      <section class="panel trades-panel" aria-labelledby="trades-title">
+        <div class="panel-head">
+          <div>
+            <span class="eyebrow">REGISTRO</span>
+            <h2 id="trades-title">Historial de operaciones</h2>
+          </div>
+          <span id="trades-count" class="count">0</span>
+        </div>
+        <ol id="trades-list" class="trades-list"></ol>
+        <p id="trades-empty" class="empty-state">Las compras y ventas aparecerán aquí.</p>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span>Simulador con datos ficticios. No es asesoría financiera.</span>
+      <span class="footer-tech">SQLITE WASM / PERSISTENCIA LOCAL</span>
+    </footer>
+
+    <div id="toast-region" class="toast-region" aria-live="polite" aria-atomic="false"></div>
+
+    <dialog id="confirm-dialog" class="dialog" aria-labelledby="dialog-title" aria-describedby="dialog-message">
+      <form method="dialog">
+        <span class="eyebrow">CONFIRMACIÓN</span>
+        <h2 id="dialog-title">Confirmar acción</h2>
+        <p id="dialog-message"></p>
+        <div class="dialog-actions">
+          <button class="btn btn-ghost" type="submit" value="cancel">Cancelar</button>
+          <button id="dialog-confirm" class="btn btn-red" type="submit" value="confirm">Confirmar</button>
+        </div>
+      </form>
+    </dialog>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

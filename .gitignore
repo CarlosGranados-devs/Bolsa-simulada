@@ -1,0 +1,7 @@
+node_modules/
+dist/
+docs-local/
+*.local
+*.log
+.DS_Store
+.vscode/
