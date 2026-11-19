@@ -81,6 +81,7 @@ export class TerminalController implements TerminalHandlers {
         this.view.resetCompanyForm();
         this.refreshAll();
         this.selectCompany(updated.id);
+        void this.db.persistNow();
         this.view.toast(`Empresa ${updated.ticker} actualizada.`, "success");
         return;
       }
@@ -89,6 +90,7 @@ export class TerminalController implements TerminalHandlers {
       this.view.resetCompanyForm();
       this.refreshAll();
       this.selectCompany(created.id);
+      void this.db.persistNow();
       this.view.toast(
         `IPO registrada: ${created.ticker}. La empresa ya cotiza en el mercado.`,
         "success",
@@ -128,6 +130,7 @@ export class TerminalController implements TerminalHandlers {
       this.view.setSelected(company, holding ? holding.qty : 0);
 
       const label = trade.side === "BUY" ? "Compra" : "Venta";
+      void this.db.persistNow();
       this.view.showOrderMessage(
         `${label} ejecutada: ${trade.qty} acciones de ${trade.ticker} a ${formatPrice(trade.price)}.`,
         "success",
@@ -270,6 +273,7 @@ export class TerminalController implements TerminalHandlers {
           this.selectCompany(first.id);
         }
       }
+      void this.db.persistNow();
 
       const liquidationMessage =
         result.liquidatedQty > 0
