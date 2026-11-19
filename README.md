@@ -24,7 +24,7 @@ base de datos **SQLite real** que vive dentro de tu navegador.
 
 ---
 
-## Cómo funciona (léelo primero)
+## Cómo funciona
 
 **Bolsa Simulada SV** es una bolsa de valores de mentira. Tienes **USD 10,000.00 virtuales**, ocho empresas inventadas cuyo precio cambia solo cada 2 segundos, y puedes comprar y vender acciones para ganar o perder dinero. También puedes **lanzar tus propias empresas** a la bolsa.
 
