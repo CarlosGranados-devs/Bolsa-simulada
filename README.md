@@ -162,4 +162,4 @@ Las empresas, tickers, precios, noticias y movimientos de este simulador son inv
 
 ## Autor
 
-Proyecto académico de Programación Orientada a Eventos.
+Carlos Josue Manajo Granados
